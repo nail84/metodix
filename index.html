@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Metodix — приложение для персонального тренера</title>
+<meta name="description" content="Клиенты, программы тренировок и живой журнал в зале — в одном приложении для тренера. Работает офлайн.">
+<link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAACXBIWXMAABCcAAAQnAEmzTo0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAP+SURBVHgB1ZrPTxNBFMff21aspJKFEAMVTXvTSCIe5WK9oRfBg8YTJdEzP/wDhD+AX2ejlCPGKDe9ES54tCYmHrsJSevBSK0NVGxnnLdYs7Q77ezuIO3n4jq73b7v+zEzzCuCAlnOzUgJRjjCPQ48iRzigGCCTjgUxDszAJgBBtuxHtxU+Rg2u2kbvg/TnPEZ7Qa3xkLENBiwPngOLdlDUgFf9/k0q/L5UzC8HosBWxiKhtNuN10F5Ep8WcR0BtoKXIlFcbZhtH4gX+JrIs9T0IYIu9IXo6Ep55jh/A95vl2NJxAwdZQdzrG/CM+nhPFr0BHw2Vg0tEJXtoD8AY/zKt8Sl3HoDAq/fmMi0YuFoxRiMAmdYzxhdoWZPcnYEciVWBY6SwBhRyGcK1bG4QSM392rwG6hYl8PD3ZBT8QAzZiRMIyEGWJS96ufvfsOzz8Uj409udkDC3f6QCdVYOOGgXgdNLLxsdRgPEFjbuNBELbfIuePgCYoZZa2CtL7i+JescxAI3ESoG2v80p4v5b3bpDxmqNgakt/MnyxifdrkACdUdAmQMV4goxXfVYFLQLI+5Q+qlAUaJrVgRYBfjw6+/Yb6CCwAK/er7FjlWEnW4agBBYw+0buyZePLsDyRL/0/pKGWggkgDxInnTj6W0Txq52w8MbUXsVdv28higEEiDL40tm2BZQg65pzI2gUfAtYKPJolW/56GNnCyVgkbBtwCZ5yhlKHXqGU1EYOxKt6d3qeBLgMz7lCZzSfnOZOV+v+u2mqLgZyYjfAmQeczO9d6w9HNkvLM2nPhdnT0LaOb9ByJ9WkEz0mg80jDudz3xLEDm/ddTA6DKXJMoeN3oeRIg8z4VbrPUqYcK2m1toHd73W57EuDm/VaFK4Nqwa2gvW63lQXIvN+qcGXICtrrHz3KAmTeVylcGZRGwwNdDeNeoqAk4P2XfVfv02YtKPMuJxVkPH2nCiSg5QTslqtUuNcGuyAoshV6yFRKS/to0Wr1FH2JczPmt3BlLNztO+Ykej99pwIZg3G+rfLkC5EuNRGPRe76KVwZzt0rCVFdU4TtnzD/kyc52ifTLaHc/HHAtBrv5HP+EC6LdysfQyJOYHaPm2fPcDrcPe1emFesWNRIGHTGzjlfhQ5D2LxO/9qxOqwY1O3Qd1hz8lhG2EjThS2AoiA0LUCHQG3XWu/4X7VQz4l1QCqRjc6ecUObNVesiu44TkI7wvh6rCeUcg41zFf0QDtGgmyqN55wnXCHzodmRE+WGsoWnDb0IxDRViWb3G43/bEHtV9ZhaUQ8f93MYXhom+9ehg1VhKI0hkSQZFckY8zZEm7JcVFV+dkfm5j0dYmBMZmOQqZZobX+AN3xr1nX6IyBgAAAABJRU5ErkJggg==">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Manrope:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap&subset=cyrillic" rel="stylesheet">
+<style>
+:root{
+  --bg:#12121f; --panel:#1a1a2e; --card:#252538; --line:#353548;
+  --text:#f0f0f8; --muted:#9090a8; --accent:#F97316; --ok:#34d399;
+  --display:'Unbounded',sans-serif; --body:'Manrope',sans-serif; --mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--body);font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+/* header */
+header{position:sticky;top:0;z-index:10;background:rgba(18,18,31,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:700;font-size:18px;letter-spacing:.02em;text-decoration:none}
+.logo-dot{width:10px;height:10px;border-radius:3px;background:var(--accent);transform:rotate(45deg)}
+.lang{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.lang button{background:none;border:0;color:var(--muted);font:600 13px var(--mono);padding:6px 12px;cursor:pointer}
+.lang button.on{background:var(--card);color:var(--text)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center;padding:88px 0 96px}
+.eyebrow{font:600 13px var(--mono);color:var(--accent);letter-spacing:.14em;text-transform:uppercase;margin-bottom:20px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(30px,4.6vw,52px);line-height:1.14;letter-spacing:-.01em}
+h1 em{font-style:normal;color:var(--accent)}
+.sub{color:var(--muted);font-size:19px;max-width:34em;margin:24px 0 36px}
+.cta{display:inline-flex;align-items:center;gap:12px;background:var(--accent);color:#160b03;font:700 17px var(--body);text-decoration:none;padding:16px 28px;border-radius:14px;transition:transform .15s ease,box-shadow .15s ease;box-shadow:0 8px 32px rgba(249,115,22,.25)}
+.cta:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(249,115,22,.35)}
+.cta svg{flex:none}
+.cta-note{font:400 14px var(--body);color:var(--muted);margin-top:14px}
+
+/* phone */
+.phone-col{display:flex;justify-content:center}
+.phone{width:300px;background:var(--panel);border:1px solid var(--line);border-radius:36px;padding:14px;box-shadow:0 24px 80px rgba(0,0,0,.5),0 0 120px rgba(249,115,22,.07);transform:rotate(2.5deg)}
+.screen{background:var(--bg);border-radius:24px;overflow:hidden;font-size:13px}
+.s-head{padding:16px 16px 12px;border-bottom:1px solid var(--line)}
+.s-client{font-weight:700;font-size:15px}
+.s-day{color:var(--muted);font-size:12px;margin-top:2px}
+.s-ex{padding:12px 16px;border-bottom:1px solid var(--line)}
+.s-ex-name{font-weight:700;margin-bottom:8px}
+.s-prev{color:var(--muted);font:400 11px var(--mono);margin-bottom:8px}
+.set{display:flex;justify-content:space-between;font:600 13px var(--mono);color:var(--muted);padding:5px 0;opacity:.35;transition:opacity .4s}
+.set .ok{color:var(--ok);opacity:0;transition:opacity .4s}
+.set.done{opacity:1}
+.set.done .ok{opacity:1}
+.s-fab{display:flex;justify-content:flex-end;padding:14px 16px 18px}
+.s-fab span{width:44px;height:44px;border-radius:14px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#160b03;font-size:24px;font-weight:700}
+
+/* workflow */
+.flow{border-top:1px solid var(--line);padding:80px 0 40px}
+.flow h2,.band h2{font-family:var(--display);font-weight:600;font-size:clamp(22px,3vw,32px);margin-bottom:48px}
+.step{display:grid;grid-template-columns:72px 1fr auto;gap:24px;align-items:baseline;padding:32px 0;border-bottom:1px solid var(--line)}
+.step:last-child{border-bottom:0}
+.step-n{font:600 15px var(--mono);color:var(--accent)}
+.step h3{font-family:var(--display);font-weight:600;font-size:20px;margin-bottom:10px}
+.step p{color:var(--muted);max-width:36em}
+.step-data{font:600 14px var(--mono);color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px;white-space:nowrap}
+.step-data .g{color:var(--ok)}
+
+/* band */
+.band{border-top:1px solid var(--line);padding:72px 0}
+.chips{display:flex;flex-wrap:wrap;gap:12px}
+.chip{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:10px 20px;font-weight:500;color:var(--text)}
+.chip b{color:var(--accent);font-weight:700;margin-right:6px}
+
+/* bottom cta */
+.bottom{border-top:1px solid var(--line);text-align:center;padding:88px 0}
+.bottom h2{font-family:var(--display);font-weight:700;font-size:clamp(24px,3.4vw,38px);margin-bottom:12px}
+.bottom p{color:var(--muted);margin-bottom:32px}
+
+footer{border-top:1px solid var(--line);padding:32px 0;color:var(--muted);font-size:14px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:8px 28px;justify-content:space-between}
+footer a{color:var(--muted)}
+footer a:hover{color:var(--text)}
+
+@media (max-width:840px){
+  .hero{grid-template-columns:1fr;padding:56px 0 64px;gap:56px}
+  .step{grid-template-columns:48px 1fr;row-gap:16px}
+  .step-data{grid-column:2}
+}
+@media (prefers-reduced-motion:no-preference){
+  .hero>div{animation:rise .7s ease both}
+  .phone-col{animation:rise .7s .15s ease both}
+  @keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="#"><span class="logo-dot"></span>Metodix</a>
+    <div class="lang" role="group" aria-label="Language">
+      <button id="lang-ru" class="on" onclick="setLang('ru')">RU</button>
+      <button id="lang-en" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <div>
+      <div class="eyebrow" data-i18n="eyebrow">приложение для персонального тренера</div>
+      <h1 data-i18n="h1">Все клиенты. Все&nbsp;программы. <em>Один журнал.</em></h1>
+      <p class="sub" data-i18n="sub">Metodix заменяет тетрадь и заметки: программы тренировок, живой журнал прямо в зале и прогресс каждого клиента — в телефоне. Работает даже без интернета.</p>
+      <a class="cta" href="https://play.google.com/store/apps/details?id=com.fittrainer.app">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 3.5v17c0 .6.7 1 1.2.6l14.4-8.5c.5-.3.5-1 0-1.3L5.2 2.9C4.7 2.5 4 2.9 4 3.5Z" fill="currentColor"/></svg>
+        <span data-i18n="cta">Скачать в Google Play</span>
+      </a>
+      <div class="cta-note" data-i18n="ctaNote">Бесплатно · Android · версия для iOS — скоро</div>
+    </div>
+
+    <div class="phone-col">
+      <div class="phone" aria-hidden="true">
+        <div class="screen">
+          <div class="s-head">
+            <div class="s-client" data-i18n="mClient">Пн · Анна К.</div>
+            <div class="s-day" data-i18n="mDay">День A — Ноги / Грудь / Спина</div>
+          </div>
+          <div class="s-ex">
+            <div class="s-ex-name" data-i18n="mEx1">Приседания со штангой</div>
+            <div class="s-prev" data-i18n="mPrev1">пред.: 57,5×10 · 57,5×9 · 55×10</div>
+            <div class="set" data-set><span>1&nbsp;·&nbsp;60 × 10</span><span class="ok">✓</span></div>
+            <div class="set" data-set><span>2&nbsp;·&nbsp;60 × 10</span><span class="ok">✓</span></div>
+            <div class="set" data-set><span data-i18n="mSet3">3&nbsp;·&nbsp;62,5 × 8</span><span class="ok">✓</span></div>
+          </div>
+          <div class="s-ex">
+            <div class="s-ex-name" data-i18n="mEx2">Жим лёжа</div>
+            <div class="s-prev" data-i18n="mPrev2">пред.: 80×8 · 80×8 · 77,5×10</div>
+            <div class="set" data-set><span>1&nbsp;·&nbsp;80 × 10</span><span class="ok">✓</span></div>
+            <div class="set" data-set><span data-i18n="mSet5">2&nbsp;·&nbsp;82,5 × 8</span><span class="ok">✓</span></div>
+          </div>
+          <div class="s-fab"><span>+</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="flow">
+    <h2 data-i18n="flowH">Как работает</h2>
+    <div class="step">
+      <div class="step-n">01</div>
+      <div>
+        <h3 data-i18n="s1h">Соберите программу</h3>
+        <p data-i18n="s1p">Недели, дни, упражнения из встроенной библиотеки. Подходы, повторы, вес и отдых — как вы привыкли их записывать, только быстрее.</p>
+      </div>
+      <div class="step-data" data-i18n="s1d">3 × 8–10 · отдых 120 c</div>
+    </div>
+    <div class="step">
+      <div class="step-n">02</div>
+      <div>
+        <h3 data-i18n="s2h">Ведите тренировку в зале</h3>
+        <p data-i18n="s2p">Подход записывается в два тапа, прошлые результаты клиента — перед глазами. Интернет пропал? Журнал работает офлайн и дошлёт всё сам.</p>
+      </div>
+      <div class="step-data" data-i18n="s2d"><span class="g">60×10 ✓</span> 62,5×8 …</div>
+    </div>
+    <div class="step">
+      <div class="step-n">03</div>
+      <div>
+        <h3 data-i18n="s3h">Покажите прогресс</h3>
+        <p data-i18n="s3p">Графики рабочих весов по каждому упражнению, календарь и история сессий. Клиент видит результат — клиент остаётся.</p>
+      </div>
+      <div class="step-data g" data-i18n="s3d"><span class="g">+12,5 кг</span> за 8 недель</div>
+    </div>
+  </section>
+
+  <section class="band">
+    <h2 data-i18n="bandH">Мелочи, которые не мелочи</h2>
+    <div class="chips">
+      <span class="chip"><b>◆</b><span data-i18n="c1">Работает офлайн в зале</span></span>
+      <span class="chip"><b>◆</b><span data-i18n="c2">Русский и английский</span></span>
+      <span class="chip"><b>◆</b><span data-i18n="c3">Килограммы и фунты</span></span>
+      <span class="chip"><b>◆</b><span data-i18n="c4">Бесплатно</span></span>
+    </div>
+  </section>
+
+  <section class="bottom">
+    <h2 data-i18n="bH">Тетрадь можно оставить дома</h2>
+    <p data-i18n="bP">Установите Metodix и проведите следующую тренировку с телефоном в руке.</p>
+    <a class="cta" href="https://play.google.com/store/apps/details?id=com.fittrainer.app">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 3.5v17c0 .6.7 1 1.2.6l14.4-8.5c.5-.3.5-1 0-1.3L5.2 2.9C4.7 2.5 4 2.9 4 3.5Z" fill="currentColor"/></svg>
+      <span data-i18n="cta2">Скачать в Google Play</span>
+    </a>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Metodix</span>
+    <span>
+      <a href="privacy-policy.html" data-i18n="fPrivacy">Политика конфиденциальности</a> ·
+      <a href="delete-account.html" data-i18n="fDelete">Удаление аккаунта</a>
+    </span>
+  </div>
+</footer>
+
+<script>
+const I18N = {
+  ru: {
+    title: 'Metodix — приложение для персонального тренера',
+    eyebrow: 'приложение для персонального тренера',
+    h1: 'Все клиенты. Все&nbsp;программы. <em>Один журнал.</em>',
+    sub: 'Metodix заменяет тетрадь и заметки: программы тренировок, живой журнал прямо в зале и прогресс каждого клиента — в телефоне. Работает даже без интернета.',
+    cta: 'Скачать в Google Play', cta2: 'Скачать в Google Play',
+    ctaNote: 'Бесплатно · Android · версия для iOS — скоро',
+    mClient: 'Пн · Анна К.', mDay: 'День A — Ноги / Грудь / Спина',
+    mEx1: 'Приседания со штангой', mPrev1: 'пред.: 57,5×10 · 57,5×9 · 55×10',
+    mEx2: 'Жим лёжа', mPrev2: 'пред.: 80×8 · 80×8 · 77,5×10',
+    mSet3: '3&nbsp;·&nbsp;62,5 × 8', mSet5: '2&nbsp;·&nbsp;82,5 × 8',
+    s2d: '<span class="g">60×10 ✓</span> 62,5×8 …',
+    flowH: 'Как работает',
+    s1h: 'Соберите программу',
+    s1p: 'Недели, дни, упражнения из встроенной библиотеки. Подходы, повторы, вес и отдых — как вы привыкли их записывать, только быстрее.',
+    s1d: '3 × 8–10 · отдых 120 c',
+    s2h: 'Ведите тренировку в зале',
+    s2p: 'Подход записывается в два тапа, прошлые результаты клиента — перед глазами. Интернет пропал? Журнал работает офлайн и дошлёт всё сам.',
+    s3h: 'Покажите прогресс',
+    s3p: 'Графики рабочих весов по каждому упражнению, календарь и история сессий. Клиент видит результат — клиент остаётся.',
+    s3d: '<span class="g">+12,5 кг</span> за 8 недель',
+    bandH: 'Мелочи, которые не мелочи',
+    c1: 'Работает офлайн в зале', c2: 'Русский и английский', c3: 'Килограммы и фунты', c4: 'Бесплатно',
+    bH: 'Тетрадь можно оставить дома',
+    bP: 'Установите Metodix и проведите следующую тренировку с телефоном в руке.',
+    fPrivacy: 'Политика конфиденциальности', fDelete: 'Удаление аккаунта',
+  },
+  en: {
+    title: 'Metodix — the personal trainer’s app',
+    eyebrow: 'the personal trainer’s app',
+    h1: 'Every client. Every&nbsp;program. <em>One logbook.</em>',
+    sub: 'Metodix replaces the notebook: training programs, a live in-gym logbook and every client’s progress — on your phone. Works even without internet.',
+    cta: 'Get it on Google Play', cta2: 'Get it on Google Play',
+    ctaNote: 'Free · Android · iOS coming soon',
+    mClient: 'Mon · Anna K.', mDay: 'Day A — Legs / Chest / Back',
+    mEx1: 'Barbell squat', mPrev1: 'prev: 57.5×10 · 57.5×9 · 55×10',
+    mEx2: 'Bench press', mPrev2: 'prev: 80×8 · 80×8 · 77.5×10',
+    mSet3: '3&nbsp;·&nbsp;62.5 × 8', mSet5: '2&nbsp;·&nbsp;82.5 × 8',
+    s2d: '<span class="g">60×10 ✓</span> 62.5×8 …',
+    flowH: 'How it works',
+    s1h: 'Build the program',
+    s1p: 'Weeks, days, exercises from the built-in library. Sets, reps, weight and rest — the way you already write them, just faster.',
+    s1d: '3 × 8–10 · rest 120 s',
+    s2h: 'Run the session in the gym',
+    s2p: 'Log a set in two taps with the client’s previous numbers right there. Connection dropped? The logbook works offline and syncs later.',
+    s3h: 'Show the progress',
+    s3p: 'Working-weight charts per exercise, a calendar and full session history. Clients who see results stay.',
+    s3d: '<span class="g">+12.5 kg</span> in 8 weeks',
+    bandH: 'Small things that aren’t small',
+    c1: 'Works offline in the gym', c2: 'English and Russian', c3: 'Kilograms and pounds', c4: 'Free',
+    bH: 'Leave the notebook at home',
+    bP: 'Install Metodix and run your next session phone in hand.',
+    fPrivacy: 'Privacy policy', fDelete: 'Delete account',
+  },
+};
+
+function setLang(lang) {
+  const dict = I18N[lang];
+  document.querySelectorAll('[data-i18n]').forEach((el) => {
+    const key = el.getAttribute('data-i18n');
+    if (dict[key] !== undefined) el.innerHTML = dict[key];
+  });
+  document.documentElement.lang = lang;
+  document.title = dict.title;
+  document.getElementById('lang-ru').classList.toggle('on', lang === 'ru');
+  document.getElementById('lang-en').classList.toggle('on', lang === 'en');
+  try { localStorage.setItem('lang', lang); } catch (e) {}
+}
+
+const saved = new URLSearchParams(location.search).get('lang')
+  || (function () { try { return localStorage.getItem('lang'); } catch (e) { return null; } })()
+  || (navigator.language && navigator.language.startsWith('ru') ? 'ru' : 'en');
+setLang(saved === 'ru' ? 'ru' : 'en');
+
+/* journal animation: sets get checked one by one, then reset */
+const sets = document.querySelectorAll('[data-set]');
+let i = 0;
+const motionOk = matchMedia('(prefers-reduced-motion: no-preference)').matches;
+if (motionOk && sets.length) {
+  setInterval(() => {
+    if (i < sets.length) {
+      sets[i].classList.add('done');
+      i += 1;
+    } else if (i < sets.length + 3) {
+      i += 1; /* pause a few ticks before resetting */
+    } else {
+      sets.forEach((s) => s.classList.remove('done'));
+      i = 0;
+    }
+  }, 1100);
+} else {
+  sets.forEach((s) => s.classList.add('done'));
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Metodix — Удаление аккаунта</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#121212;color:#e0e0e0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px}
+.card{background:#1e1e1e;border-radius:16px;padding:32px;max-width:480px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,.4)}
+h1{font-size:24px;margin-bottom:8px;color:#bb86fc}
+.subtitle{color:#aaa;margin-bottom:24px;font-size:14px}
+.warning{background:#2d1b1b;border:1px solid #cf6679;border-radius:8px;padding:16px;margin-bottom:24px}
+.warning h3{color:#cf6679;margin-bottom:8px;font-size:14px}
+.warning ul{padding-left:20px;font-size:13px;color:#e0a0a0}
+.warning ul li{margin-bottom:4px}
+.warning p{font-size:13px;color:#cf6679;font-weight:600;margin-top:8px}
+label{display:block;font-size:14px;color:#aaa;margin-bottom:6px}
+input{width:100%;padding:12px;border-radius:8px;border:1px solid #333;background:#2a2a2a;color:#e0e0e0;font-size:16px;outline:none;margin-bottom:16px}
+input:focus{border-color:#bb86fc}
+button{width:100%;padding:14px;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;transition:opacity .2s}
+button:disabled{opacity:.5;cursor:not-allowed}
+.btn-primary{background:#bb86fc;color:#121212}
+.btn-danger{background:#cf6679;color:#fff}
+.btn-secondary{background:transparent;border:1px solid #555;color:#aaa;margin-top:8px}
+.msg{padding:12px;border-radius:8px;margin-bottom:16px;font-size:14px}
+.msg-ok{background:#1b2d1b;border:1px solid #4caf50;color:#81c784}
+.msg-err{background:#2d1b1b;border:1px solid #cf6679;color:#e0a0a0}
+.success-card{text-align:center;padding:48px 32px}
+.success-card .icon{font-size:48px;margin-bottom:16px}
+.success-card h2{color:#4caf50;margin-bottom:8px}
+.lang{position:absolute;top:16px;right:16px}
+.lang a{color:#bb86fc;text-decoration:none;font-size:13px}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="lang"><a id="lang-toggle" href="#">English</a></div>
+<div class="card">
+  <h1>Metodix</h1>
+  <p class="subtitle" id="page-subtitle">Удаление аккаунта и данных</p>
+
+  <div class="warning">
+    <h3 id="warn-title">Будут удалены:</h3>
+    <ul>
+      <li id="w1">Ваш аккаунт и профиль тренера</li>
+      <li id="w2">Все клиенты и их данные</li>
+      <li id="w3">Все программы тренировок</li>
+      <li id="w4">Все сессии и записи подходов</li>
+      <li id="w5">Ваши пользовательские упражнения</li>
+    </ul>
+    <p id="warn-footer">Это действие необратимо. Данные не подлежат восстановлению.</p>
+  </div>
+
+  <div id="step1">
+    <label id="email-label">Введите email вашего аккаунта</label>
+    <input type="email" id="email" placeholder="email@example.com" onkeydown="if(event.key==='Enter')sendOtp()"/>
+    <div id="msg" class="msg hidden"></div>
+    <button id="btn-send" class="btn-primary" onclick="sendOtp()">Отправить код</button>
+  </div>
+
+  <div id="step2" class="hidden">
+    <div class="msg msg-ok" id="otp-sent-msg">Код отправлен на вашу почту. Проверьте входящие и спам.</div>
+    <label id="otp-label">Введите код из письма</label>
+    <input type="text" id="otp" placeholder="123456" maxlength="6" inputmode="numeric" onkeydown="if(event.key==='Enter')confirmDelete()"/>
+    <div id="msg2" class="msg hidden"></div>
+    <button id="btn-delete" class="btn-danger" onclick="confirmDelete()">Удалить аккаунт</button>
+    <button id="btn-cancel" class="btn-secondary" onclick="location.reload()">Отмена</button>
+  </div>
+
+  <div id="step3" class="hidden success-card">
+    <div class="icon">&#10003;</div>
+    <h2 id="done-title">Аккаунт удалён</h2>
+    <p id="done-msg" style="color:#aaa">Ваш аккаунт и все данные были полностью удалены.</p>
+  </div>
+</div>
+
+<script>
+const API = "https://zyxvnnfddbsermoppyqb.supabase.co/functions/v1/delete-account";
+
+const i18n = {
+  ru: {
+    subtitle: "Удаление аккаунта и данных",
+    warnTitle: "Будут удалены:",
+    w1: "Ваш аккаунт и профиль тренера",
+    w2: "Все клиенты и их данные",
+    w3: "Все программы тренировок",
+    w4: "Все сессии и записи подходов",
+    w5: "Ваши пользовательские упражнения",
+    warnFooter: "Это действие необратимо. Данные не подлежат восстановлению.",
+    emailLabel: "Введите email вашего аккаунта",
+    sendCode: "Отправить код",
+    sending: "Отправка...",
+    otpSent: "Код отправлен на вашу почту. Проверьте входящие и спам.",
+    otpLabel: "Введите код из письма",
+    deleteBtn: "Удалить аккаунт",
+    deleting: "Удаление...",
+    cancel: "Отмена",
+    doneTitle: "Аккаунт удалён",
+    doneMsg: "Ваш аккаунт и все данные были полностью удалены.",
+    errGeneric: "Произошла ошибка. Попробуйте позже.",
+    langToggle: "English"
+  },
+  en: {
+    subtitle: "Account & Data Deletion",
+    warnTitle: "The following will be deleted:",
+    w1: "Your account and trainer profile",
+    w2: "All clients and their data",
+    w3: "All workout programs",
+    w4: "All sessions and set logs",
+    w5: "Your custom exercises",
+    warnFooter: "This action is irreversible. Data cannot be recovered.",
+    emailLabel: "Enter your account email",
+    sendCode: "Send Code",
+    sending: "Sending...",
+    otpSent: "Code sent to your email. Check inbox and spam.",
+    otpLabel: "Enter code from email",
+    deleteBtn: "Delete Account",
+    deleting: "Deleting...",
+    cancel: "Cancel",
+    doneTitle: "Account Deleted",
+    doneMsg: "Your account and all data have been permanently deleted.",
+    errGeneric: "An error occurred. Please try again later.",
+    langToggle: "Русский"
+  },
+  es: {
+    subtitle: "Eliminación de cuenta y datos",
+    warnTitle: "Se eliminará lo siguiente:",
+    w1: "Tu cuenta y perfil de entrenador",
+    w2: "Todos los clientes y sus datos",
+    w3: "Todos los programas de entrenamiento",
+    w4: "Todas las sesiones y registros de series",
+    w5: "Tus ejercicios personalizados",
+    warnFooter: "Esta acción es irreversible. Los datos no se pueden recuperar.",
+    emailLabel: "Introduce el correo de tu cuenta",
+    sendCode: "Enviar código",
+    sending: "Enviando...",
+    otpSent: "Código enviado a tu correo. Revisa la bandeja de entrada y spam.",
+    otpLabel: "Introduce el código del correo",
+    deleteBtn: "Eliminar cuenta",
+    deleting: "Eliminando...",
+    cancel: "Cancelar",
+    doneTitle: "Cuenta eliminada",
+    doneMsg: "Tu cuenta y todos los datos han sido eliminados permanentemente.",
+    errGeneric: "Ha ocurrido un error. Inténtalo de nuevo más tarde.",
+    langToggle: "English"
+  },
+  de: {
+    subtitle: "Konto- und Datenlöschung",
+    warnTitle: "Folgendes wird gelöscht:",
+    w1: "Dein Konto und Trainerprofil",
+    w2: "Alle Klienten und ihre Daten",
+    w3: "Alle Trainingsprogramme",
+    w4: "Alle Sitzungen und Satzprotokolle",
+    w5: "Deine eigenen Übungen",
+    warnFooter: "Diese Aktion ist unumkehrbar. Daten können nicht wiederhergestellt werden.",
+    emailLabel: "Gib die E-Mail deines Kontos ein",
+    sendCode: "Code senden",
+    sending: "Wird gesendet...",
+    otpSent: "Code an deine E-Mail gesendet. Prüfe Posteingang und Spam.",
+    otpLabel: "Gib den Code aus der E-Mail ein",
+    deleteBtn: "Konto löschen",
+    deleting: "Wird gelöscht...",
+    cancel: "Abbrechen",
+    doneTitle: "Konto gelöscht",
+    doneMsg: "Dein Konto und alle Daten wurden dauerhaft gelöscht.",
+    errGeneric: "Ein Fehler ist aufgetreten. Bitte versuche es später erneut.",
+    langToggle: "English"
+  },
+  fr: {
+    subtitle: "Suppression du compte et des données",
+    warnTitle: "Les éléments suivants seront supprimés :",
+    w1: "Votre compte et votre profil de coach",
+    w2: "Tous les clients et leurs données",
+    w3: "Tous les programmes d'entraînement",
+    w4: "Toutes les sessions et journaux de séries",
+    w5: "Vos exercices personnalisés",
+    warnFooter: "Cette action est irréversible. Les données ne peuvent pas être récupérées.",
+    emailLabel: "Saisissez l'email de votre compte",
+    sendCode: "Envoyer le code",
+    sending: "Envoi...",
+    otpSent: "Code envoyé à votre email. Vérifiez la boîte de réception et les spams.",
+    otpLabel: "Saisissez le code de l'email",
+    deleteBtn: "Supprimer le compte",
+    deleting: "Suppression...",
+    cancel: "Annuler",
+    doneTitle: "Compte supprimé",
+    doneMsg: "Votre compte et toutes les données ont été supprimés définitivement.",
+    errGeneric: "Une erreur est survenue. Veuillez réessayer plus tard.",
+    langToggle: "English"
+  },
+  it: {
+    subtitle: "Eliminazione account e dati",
+    warnTitle: "Verrà eliminato quanto segue:",
+    w1: "Il tuo account e profilo allenatore",
+    w2: "Tutti i clienti e i loro dati",
+    w3: "Tutti i programmi di allenamento",
+    w4: "Tutte le sessioni e i registri delle serie",
+    w5: "I tuoi esercizi personalizzati",
+    warnFooter: "L'azione è irreversibile. I dati non possono essere recuperati.",
+    emailLabel: "Inserisci l'email del tuo account",
+    sendCode: "Invia codice",
+    sending: "Invio in corso...",
+    otpSent: "Codice inviato alla tua email. Controlla posta in arrivo e spam.",
+    otpLabel: "Inserisci il codice ricevuto",
+    deleteBtn: "Elimina account",
+    deleting: "Eliminazione...",
+    cancel: "Annulla",
+    doneTitle: "Account eliminato",
+    doneMsg: "Il tuo account e tutti i dati sono stati eliminati definitivamente.",
+    errGeneric: "Si è verificato un errore. Riprova più tardi.",
+    langToggle: "English"
+  },
+  "pt-BR": {
+    subtitle: "Exclusão de conta e dados",
+    warnTitle: "O seguinte será excluído:",
+    w1: "Sua conta e perfil de treinador",
+    w2: "Todos os clientes e seus dados",
+    w3: "Todos os programas de treino",
+    w4: "Todas as sessões e registros de séries",
+    w5: "Seus exercícios personalizados",
+    warnFooter: "Esta ação é irreversível. Os dados não podem ser recuperados.",
+    emailLabel: "Digite o e-mail da sua conta",
+    sendCode: "Enviar código",
+    sending: "Enviando...",
+    otpSent: "Código enviado para o seu e-mail. Verifique a caixa de entrada e spam.",
+    otpLabel: "Digite o código do e-mail",
+    deleteBtn: "Excluir conta",
+    deleting: "Excluindo...",
+    cancel: "Cancelar",
+    doneTitle: "Conta excluída",
+    doneMsg: "Sua conta e todos os dados foram excluídos permanentemente.",
+    errGeneric: "Ocorreu um erro. Tente novamente mais tarde.",
+    langToggle: "English"
+  },
+  "pt-PT": {
+    subtitle: "Eliminação de conta e dados",
+    warnTitle: "O seguinte será eliminado:",
+    w1: "A tua conta e perfil de treinador",
+    w2: "Todos os clientes e os seus dados",
+    w3: "Todos os programas de treino",
+    w4: "Todas as sessões e registos de séries",
+    w5: "Os teus exercícios personalizados",
+    warnFooter: "Esta acção é irreversível. Os dados não podem ser recuperados.",
+    emailLabel: "Introduz o e-mail da tua conta",
+    sendCode: "Enviar código",
+    sending: "A enviar...",
+    otpSent: "Código enviado para o teu e-mail. Verifica a caixa de entrada e spam.",
+    otpLabel: "Introduz o código do e-mail",
+    deleteBtn: "Eliminar conta",
+    deleting: "A eliminar...",
+    cancel: "Cancelar",
+    doneTitle: "Conta eliminada",
+    doneMsg: "A tua conta e todos os dados foram eliminados permanentemente.",
+    errGeneric: "Ocorreu um erro. Tenta novamente mais tarde.",
+    langToggle: "English"
+  },
+  "zh-CN": {
+    subtitle: "删除账号和数据",
+    warnTitle: "以下内容将被删除：",
+    w1: "你的账号和教练资料",
+    w2: "所有客户及其数据",
+    w3: "所有训练计划",
+    w4: "所有训练记录和组数日志",
+    w5: "你的自定义动作",
+    warnFooter: "此操作不可逆。数据无法恢复。",
+    emailLabel: "请输入你的账号邮箱",
+    sendCode: "发送验证码",
+    sending: "发送中...",
+    otpSent: "验证码已发送到你的邮箱。请检查收件箱和垃圾邮件。",
+    otpLabel: "请输入邮件中的验证码",
+    deleteBtn: "删除账号",
+    deleting: "删除中...",
+    cancel: "取消",
+    doneTitle: "账号已删除",
+    doneMsg: "你的账号和所有数据已被永久删除。",
+    errGeneric: "发生错误。请稍后重试。",
+    langToggle: "English"
+  },
+  ja: {
+    subtitle: "アカウントとデータの削除",
+    warnTitle: "以下が削除されます:",
+    w1: "アカウントとトレーナープロフィール",
+    w2: "すべてのクライアントとそのデータ",
+    w3: "すべてのトレーニングプログラム",
+    w4: "すべてのセッションとセットの記録",
+    w5: "あなたのカスタムエクササイズ",
+    warnFooter: "この操作は取り消せません。データは復元できません。",
+    emailLabel: "アカウントのメールアドレスを入力",
+    sendCode: "コードを送信",
+    sending: "送信中...",
+    otpSent: "コードをメールに送信しました。受信箱と迷惑メールをご確認ください。",
+    otpLabel: "メールに記載のコードを入力",
+    deleteBtn: "アカウントを削除",
+    deleting: "削除中...",
+    cancel: "キャンセル",
+    doneTitle: "アカウントを削除しました",
+    doneMsg: "アカウントとすべてのデータが完全に削除されました。",
+    errGeneric: "エラーが発生しました。後でもう一度お試しください。",
+    langToggle: "English"
+  }
+};
+
+const SUPPORTED = ['ru','en','es','de','fr','it','pt-BR','pt-PT','zh-CN','ja'];
+const PREFERRED = { pt: 'pt-BR', zh: 'zh-CN' };
+
+function pickLang(raw) {
+  const tag = (raw || '').trim();
+  if (!tag) return 'en';
+  if (SUPPORTED.indexOf(tag) !== -1) return tag;
+  const base = tag.split('-')[0];
+  if (PREFERRED[base]) return PREFERRED[base];
+  if (SUPPORTED.indexOf(base) !== -1) return base;
+  return 'en';
+}
+
+let lang = pickLang(new URLSearchParams(location.search).get("lang"));
+
+function applyLang() {
+  const t = i18n[lang];
+  document.documentElement.lang = lang;
+  document.title = "Metodix — " + t.subtitle;
+  document.getElementById("page-subtitle").textContent = t.subtitle;
+  document.getElementById("warn-title").textContent = t.warnTitle;
+  document.getElementById("w1").textContent = t.w1;
+  document.getElementById("w2").textContent = t.w2;
+  document.getElementById("w3").textContent = t.w3;
+  document.getElementById("w4").textContent = t.w4;
+  document.getElementById("w5").textContent = t.w5;
+  document.getElementById("warn-footer").textContent = t.warnFooter;
+  document.getElementById("email-label").textContent = t.emailLabel;
+  document.getElementById("btn-send").textContent = t.sendCode;
+  document.getElementById("otp-sent-msg").textContent = t.otpSent;
+  document.getElementById("otp-label").textContent = t.otpLabel;
+  document.getElementById("btn-delete").textContent = t.deleteBtn;
+  document.getElementById("btn-cancel").textContent = t.cancel;
+  document.getElementById("done-title").textContent = t.doneTitle;
+  document.getElementById("done-msg").textContent = t.doneMsg;
+  document.getElementById("lang-toggle").textContent = t.langToggle;
+  document.getElementById("lang-toggle").href = "?lang=" + (lang === "ru" ? "en" : "ru");
+}
+applyLang();
+
+// Toggle remains ru↔en for legacy in-page UX; deep link `?lang=` accepts all 10 locales.
+// (Other locales reach the page via the app's delete-account button which forwards i18n.language directly.)
+document.getElementById("lang-toggle").addEventListener("click", function(e) {
+  e.preventDefault();
+  lang = lang === "ru" ? "en" : "ru";
+  history.replaceState(null, "", "?lang=" + lang);
+  applyLang();
+});
+
+let userEmail = "";
+
+async function sendOtp() {
+  const t = i18n[lang];
+  const email = document.getElementById("email").value.trim();
+  if (!email) return;
+  const btn = document.getElementById("btn-send");
+  const msg = document.getElementById("msg");
+  btn.disabled = true;
+  btn.textContent = t.sending;
+  msg.className = "msg hidden";
+  try {
+    const res = await fetch(API, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({action: "send-otp", email, lang})
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      msg.className = "msg msg-err";
+      msg.textContent = data.error || t.errGeneric;
+      btn.disabled = false;
+      btn.textContent = t.sendCode;
+      return;
+    }
+    userEmail = email;
+    document.getElementById("step1").classList.add("hidden");
+    document.getElementById("step2").classList.remove("hidden");
+  } catch(e) {
+    msg.className = "msg msg-err";
+    msg.textContent = t.errGeneric;
+    btn.disabled = false;
+    btn.textContent = t.sendCode;
+  }
+}
+
+async function confirmDelete() {
+  const t = i18n[lang];
+  const otp = document.getElementById("otp").value.trim();
+  if (!otp) return;
+  const btn = document.getElementById("btn-delete");
+  const msg2 = document.getElementById("msg2");
+  btn.disabled = true;
+  btn.textContent = t.deleting;
+  msg2.className = "msg hidden";
+  try {
+    const res = await fetch(API, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({action: "confirm-delete", email: userEmail, otp, lang})
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      msg2.className = "msg msg-err";
+      msg2.textContent = data.error || t.errGeneric;
+      btn.disabled = false;
+      btn.textContent = t.deleteBtn;
+      return;
+    }
+    document.getElementById("step2").classList.add("hidden");
+    document.getElementById("step3").classList.remove("hidden");
+  } catch(e) {
+    msg2.className = "msg msg-err";
+    msg2.textContent = t.errGeneric;
+    btn.disabled = false;
+    btn.textContent = t.deleteBtn;
+  }
+}
+</script>
+</body>
+</html>
