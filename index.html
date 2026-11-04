@@ -65,6 +65,14 @@ h1 em{font-style:normal;color:var(--accent)}
 .step-data{font:600 14px var(--mono);color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 16px;white-space:nowrap}
 .step-data .g{color:var(--ok)}
 
+.ai{border-top:1px solid var(--line);padding:80px 0 40px}
+.ai h2{font-family:var(--display);font-weight:600;font-size:clamp(22px,3vw,32px);margin-bottom:16px}
+.ai .lead{color:var(--muted);max-width:40em;margin-bottom:28px}
+.say{font:500 15px var(--mono);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin:0 0 12px;max-width:40em}
+.say b{color:var(--accent);margin-right:8px}
+.url{font:600 14px var(--mono);word-break:break-all;background:var(--panel);border:1px dashed var(--accent);border-radius:10px;padding:12px 16px;margin:20px 0 10px;max-width:40em;user-select:all}
+.ai ol{color:var(--muted);padding-left:1.3em;max-width:40em}
+.ai ol li{margin-bottom:6px}
 /* band */
 .band{border-top:1px solid var(--line);padding:72px 0}
 .chips{display:flex;flex-wrap:wrap;gap:12px}
@@ -156,6 +164,20 @@ footer a:hover{color:var(--text)}
     </div>
   </section>
 
+  <section class="ai" id="ai">
+    <h2 data-i18n="aiH">Журнал, который ведёт ваш AI-ассистент</h2>
+    <p class="lead" data-i18n="aiLead">Подключите Metodix к ChatGPT или Claude — и просто говорите, что сделали в зале. Ассистент найдёт клиента и упражнения, сверится с историей и запишет тренировку сам.</p>
+    <div class="say"><b>›</b><span data-i18n="aiEx1">Маша сегодня: присед 3×8 по 60, жим ногами 3×12 по 120</span></div>
+    <div class="say"><b>›</b><span data-i18n="aiEx2">Распиши Диме на четверг как в прошлый раз, но +2,5 кг в жиме</span></div>
+    <div class="say"><b>›</b><span data-i18n="aiEx3">Сколько Маша приседала месяц назад?</span></div>
+    <div class="url">https://zyxvnnfddbsermoppyqb.supabase.co/functions/v1/mcp</div>
+    <ol>
+      <li data-i18n="aiStep1">В ChatGPT или Claude откройте настройки коннекторов (приложений) и добавьте свой коннектор по этому адресу.</li>
+      <li data-i18n="aiStep2">Войдите в Metodix или зарегистрируйтесь прямо на открывшейся странице — приложение для этого не нужно.</li>
+      <li data-i18n="aiStep3">Нажмите «Разрешить». Отозвать доступ можно в любой момент: Настройки → Агенты.</li>
+    </ol>
+  </section>
+
   <section class="gallery">
     <h2 data-i18n="galH">Внутри приложения</h2>
     <div class="shots">
@@ -219,6 +241,14 @@ const I18N = {
     bH: 'Тетрадь можно оставить дома',
     bP: 'Установите Metodix и проведите следующую тренировку с телефоном в руке.',
     fPrivacy: 'Политика конфиденциальности', fDelete: 'Удаление аккаунта',
+    aiH: 'Журнал, который ведёт ваш AI-ассистент',
+    aiLead: 'Подключите Metodix к ChatGPT или Claude — и просто говорите, что сделали в зале. Ассистент найдёт клиента и упражнения, сверится с историей и запишет тренировку сам.',
+    aiEx1: 'Маша сегодня: присед 3×8 по 60, жим ногами 3×12 по 120',
+    aiEx2: 'Распиши Диме на четверг как в прошлый раз, но +2,5 кг в жиме',
+    aiEx3: 'Сколько Маша приседала месяц назад?',
+    aiStep1: 'В ChatGPT или Claude откройте настройки коннекторов (приложений) и добавьте свой коннектор по этому адресу.',
+    aiStep2: 'Войдите в Metodix или зарегистрируйтесь прямо на открывшейся странице — приложение для этого не нужно.',
+    aiStep3: 'Нажмите «Разрешить». Отозвать доступ можно в любой момент: Настройки → Агенты.',
   },
   en: {
     title: 'Metodix — the personal trainer’s app',
@@ -243,6 +273,14 @@ const I18N = {
     bH: 'Leave the notebook at home',
     bP: 'Install Metodix and run your next session phone in hand.',
     fPrivacy: 'Privacy policy', fDelete: 'Delete account',
+    aiH: 'A logbook your AI assistant keeps for you',
+    aiLead: 'Connect Metodix to ChatGPT or Claude and just say what happened in the gym. The assistant finds the client and exercises, checks the history and logs the workout itself.',
+    aiEx1: 'Maria today: squat 3×8 at 60, leg press 3×12 at 120',
+    aiEx2: 'Plan Thursday for Dan like last time, but +2.5 kg on bench',
+    aiEx3: 'How much was Maria squatting a month ago?',
+    aiStep1: 'In ChatGPT or Claude, open connector (app) settings and add a custom connector with this URL.',
+    aiStep2: 'Sign in to Metodix or create an account right on the page that opens — no app needed.',
+    aiStep3: 'Press “Allow”. You can revoke access any time in Settings → Agents.',
   },
 };
 
